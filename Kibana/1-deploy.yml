@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana
+  namespace: logging
+  labels:
+    app: kibana
+spec:
+  selector:
+    matchLabels:
+      app: kibana
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      volumes:
+      - name: kibana-v 
+        configMap:
+          name: kibana
+      containers:
+      - image: docker.elastic.co/kibana/kibana:7.5.2
+        name: kibana
+        ports:
+        - containerPort: 5601
+          name: kibana
+        volumeMounts:
+        - name: kibana-v 
+          mountPath: /usr/share/kibana/config/kibana.yml
+          subPath: kibana.yml

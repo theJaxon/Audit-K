@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch
+  namespace: logging
+  labels:
+    app: elasticsearch
+spec:
+  selector:
+    matchLabels:
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      #nodeName: worker1
+      volumes:
+      - name: elasticsearch-v 
+        configMap:
+          name: elasticsearch 
+      containers:
+      - image: docker.elastic.co/elasticsearch/elasticsearch:7.5.2
+        name: elasticsearch
+        ports:
+        - containerPort: 9200
+          name: elasticsearch
+        volumeMounts:
+        - name: elasticsearch-v 
+          mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+          subPath: elasticsearch.yml
+        env:
+        - name: ES_JAVA_OPTS
+          value: "-Xms1024m -Xmx1024m"
+        - name: node.name
+          value: master
