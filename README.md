@@ -68,6 +68,13 @@ k create clusterrolebinding fluent-bit-read --serviceaccount=logging:fluent-bit 
 # Create the ConfigMap the will be used by the DaemonSet
 k apply -f https://raw.githubusercontent.com/fluent/fluent-bit-kubernetes-logging/master/output/elasticsearch/fluent-bit-configmap.yaml
 
+# The configMap is modified so that it reads the audit log file
+input-kubernetes.conf: |
+  [INPUT]
+      Name              tail
+      Tag               kube.*
+      Path              /etc/kubernetes/audit/*.log
+
 # Apply FluentBit to ElasticSearch DaemonSet 
 # https://docs.fluentbit.io/manual/installation/kubernetes#fluent-bit-to-elasticsearch
 k apply -f https://raw.githubusercontent.com/fluent/fluent-bit-kubernetes-logging/master/output/elasticsearch/fluent-bit-ds.yaml
